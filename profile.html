@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Billy Yew</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0d0f;
+      --surface: #141417;
+      --border: #222228;
+      --accent: #00e5ff;
+      --accent2: #7b61ff;
+      --text: #e8e8f0;
+      --muted: #666680;
+      --card: #16161a;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    /* ── GRID BACKGROUND ── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 3rem;
+      background: rgba(13,13,15,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--accent); }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 0 3rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .hero-inner {
+      padding-top: 5rem;
+    }
+
+    .hero-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.2s;
+    }
+
+    .hero-name {
+      font-size: clamp(3.5rem, 8vw, 7rem);
+      font-weight: 800;
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.35s;
+    }
+
+    .hero-name span {
+      display: block;
+      background: linear-gradient(135deg, var(--text) 0%, var(--muted) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-name .accent-line {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-bio {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.8;
+      max-width: 480px;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.5s;
+    }
+
+    .hero-links {
+      display: flex;
+      gap: 1rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.65s;
+    }
+
+    .btn {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.75rem 1.75rem;
+      border-radius: 3px;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg);
+      border: 1px solid var(--accent);
+    }
+
+    .btn-primary:hover {
+      background: transparent;
+      color: var(--accent);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ── SCROLL INDICATOR ── */
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.9s;
+    }
+
+    .scroll-line {
+      width: 40px;
+      height: 1px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .scroll-line::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: var(--accent);
+      animation: scanline 2s ease-in-out infinite;
+    }
+
+    /* ── SECTIONS ── */
+    section {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 6rem 3rem;
+    }
+
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 3rem;
+      color: var(--text);
+    }
+
+    /* ── ABOUT ── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .about-text {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.9;
+    }
+
+    .about-text p + p { margin-top: 1.25rem; }
+
+    .about-tags {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .tag-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.9rem 1.25rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--muted);
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .tag-row:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
+    .tag-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .tag-dot.purple { background: var(--accent2); }
+    .tag-dot.green { background: #00ff88; }
+    .tag-dot.orange { background: #ff6b35; }
+
+    /* ── PROJECTS ── */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .project-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.75rem;
+      text-decoration: none;
+      transition: border-color 0.2s, transform 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .project-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+
+    .project-card:hover {
+      border-color: var(--border);
+      transform: translateY(-3px);
+    }
+
+    .project-card:hover::before { transform: scaleX(1); }
+
+    .project-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .project-icon {
+      font-size: 1.5rem;
+    }
+
+    .project-lang {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      padding: 0.25rem 0.6rem;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+    }
+
+    .project-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+
+    .project-desc {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.7;
+      flex: 1;
+    }
+
+    .project-footer {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+    }
+
+    .project-footer.coming {
+      color: var(--muted);
+    }
+
+    /* ── COMING SOON CARD ── */
+    .project-card.wip {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 2rem 3rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    footer p {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes scanline {
+      0%   { left: -100%; }
+      50%  { left: 100%; }
+      100% { left: 100%; }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .hero, section { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .hero-name { font-size: 3rem; }
+      .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+      footer { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <span class="nav-logo">// billy yew</span>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="https://github.com/Zfyew" target="_blank">GitHub</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-inner">
+      <p class="hero-tag">// IT Support Engineer · London</p>
+      <h1 class="hero-name">
+        <span>Billy</span>
+        <span class="accent-line">Yew.</span>
+      </h1>
+      <p class="hero-bio">
+        IT professional by day, curious tinkerer by night. I'm into tech, scripting, ethical hacking and building things — whether that's a PC, a script, or something I probably shouldn't have started at midnight.
+      </p>
+      <div class="hero-links">
+        <a href="#projects" class="btn btn-primary">View Projects</a>
+        <a href="https://github.com/Zfyew" target="_blank" class="btn btn-ghost">GitHub Profile</a>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <span class="scroll-line"></span>
+      scroll
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <p class="section-label">// 001</p>
+    <h2 class="section-title">About Me</h2>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>
+          IT Support Engineer based in London with a background spanning endpoint management, identity security, SaaS administration and scripted automation. Currently working at UnderwriteMe, supporting a macOS fleet and a globally distributed team.
+        </p>
+        <p>
+          Outside of work I enjoy gaming, building PCs and getting into rabbit holes around ethical hacking and programming. Most of the projects here started as "I wonder if I can build that."
+        </p>
+        <p>
+          Looking to grow into cloud engineering or cyber security — these projects are part of that journey.
+        </p>
+      </div>
+      <div class="about-tags">
+        <div class="tag-row"><span class="tag-dot"></span> Jamf Pro · Microsoft Entra ID · M365</div>
+        <div class="tag-row"><span class="tag-dot purple"></span> PowerShell · Python · Bash</div>
+        <div class="tag-row"><span class="tag-dot green"></span> Zscaler · CrowdStrike · Jamf Protect</div>
+        <div class="tag-row"><span class="tag-dot orange"></span> Ethical Hacking · Cloud · Security</div>
+        <div class="tag-row"><span class="tag-dot"></span> PC Building · Gaming · Tinkering</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <p class="section-label">// 002</p>
+    <h2 class="section-title">Projects</h2>
+    <div class="projects-grid">
+
+      <!-- Cyber Security RPG -->
+      <a href="https://github.com/Zfyew" target="_blank" class="project-card wip">
+        <div class="project-header">
+          <span class="project-icon">🎮</span>
+          <span class="project-lang">Python</span>
+        </div>
+        <div class="project-name">Cyber Security RPG</div>
+        <div class="project-desc">A terminal-based RPG where you play as a security analyst — crack passwords, scan networks, investigate breaches. Levels built around real security concepts.</div>
+        <div class="project-footer coming">// coming soon</div>
+      </a>
+
+      <!-- Spotify Analyser -->
+      <a href="https://github.com/Zfyew" target="_blank" class="project-card wip">
+        <div class="project-header">
+          <span class="project-icon">🎵</span>
+          <span class="project-lang">Python</span>
+        </div>
+        <div class="project-name">Spotify Playlist Analyser</div>
+        <div class="project-desc">Connects to the Spotify API to analyse your listening habits — top genres, energy levels, mood patterns and playlist stats visualised in the terminal.</div>
+        <div class="project-footer coming">// coming soon</div>
+      </a>
+
+      <!-- Network Diagnostic -->
+      <a href="https://github.com/Zfyew" target="_blank" class="project-card wip">
+        <div class="project-header">
+          <span class="project-icon">🔍</span>
+          <span class="project-lang">Python</span>
+        </div>
+        <div class="project-name">Network Diagnostic Tool</div>
+        <div class="project-desc">A first-response network troubleshooting toolkit — runs ping tests, DNS lookups, traceroutes and port checks against a target host.</div>
+        <div class="project-footer coming">// coming soon</div>
+      </a>
+
+      <!-- System Health Monitor -->
+      <a href="https://github.com/Zfyew" target="_blank" class="project-card wip">
+        <div class="project-header">
+          <span class="project-icon">📊</span>
+          <span class="project-lang">Python</span>
+        </div>
+        <div class="project-name">System Health Monitor</div>
+        <div class="project-desc">Monitors CPU, memory, disk usage and running processes in real time. Flags thresholds and outputs a clean summary report.</div>
+        <div class="project-footer coming">// coming soon</div>
+      </a>
+
+      <!-- System Cleanup -->
+      <a href="https://github.com/Zfyew" target="_blank" class="project-card wip">
+        <div class="project-header">
+          <span class="project-icon">🧹</span>
+          <span class="project-lang">PowerShell</span>
+        </div>
+        <div class="project-name">Windows System Cleanup</div>
+        <div class="project-desc">Automates clearing temp files, emptying the recycle bin, flushing DNS cache and reporting disk space recovered. Scheduled or run on demand.</div>
+        <div class="project-footer coming">// coming soon</div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>Built by Billy Yew · <a href="https://github.com/Zfyew" target="_blank">github.com/Zfyew</a></p>
+    <p>London, UK · <a href="https://www.linkedin.com/in/billy-yew-359b0a1b3/" target="_blank">LinkedIn</a></p>
+  </footer>
+
+</body>
+</html>
