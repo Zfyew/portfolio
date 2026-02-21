@@ -52,14 +52,18 @@
 
     #rain { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.18; }
 
-    .jp-mark {
-      position: fixed; right: 1rem; top: 50%;
+    .shuriken-mark {
+      position: fixed; right: -4rem; top: 50%;
       transform: translateY(-50%);
-      font-family: 'Noto Serif JP', serif;
-      font-size: 15rem;
-      color: rgba(139,26,26,0.06);
+      width: 38rem; height: 38rem;
+      opacity: 0.045;
       pointer-events: none; z-index: 0;
-      user-select: none; line-height: 1;
+      animation: shuriken-spin 60s linear infinite;
+    }
+
+    @keyframes shuriken-spin {
+      from { transform: translateY(-50%) rotate(0deg); }
+      to   { transform: translateY(-50%) rotate(360deg); }
     }
 
     /* ── NAV ── */
@@ -83,7 +87,7 @@
     .nav-cloud {
       width: 48px; height: 22px;
       flex-shrink: 0;
-      filter: brightness(0.45) sepia(1) saturate(10) hue-rotate(-20deg);
+      filter: brightness(0.5) sepia(1) saturate(12) hue-rotate(-15deg) drop-shadow(0 0 1px rgba(255,255,255,0.3));
     }
 
     .nav-links { display: flex; gap: 3rem; list-style: none; }
@@ -104,70 +108,49 @@
     .nav-links a:hover { color: var(--nav-hover); }
     .nav-links a:hover::before { opacity: 1; }
 
-    /* ── REALISTIC GLITCH ── */
+    /* ── TSUKUYOMI — name illusion ── */
+    /* Fires every 12s. Screen flicker → colour invert → name becomes 梓峰 → snaps back */
 
-    /* Name: fires every ~10s, lasts ~500ms, multiple horizontal slices with skew + displacement */
-    @keyframes glitch-body {
-      0%,87%,100%  { transform: translate(0) skew(0deg); }
-      88%          { transform: translate(-4px, 0) skew(-1.5deg); }
-      88.3%        { transform: translate(5px, 0) skew(1deg); }
-      88.6%        { transform: translate(-2px, 0) skew(0.5deg); }
-      89%          { transform: translate(0) skew(0deg); }
-      92%          { transform: translate(3px, 0) skew(-0.5deg); }
-      92.2%        { transform: translate(-3px, 0) skew(0.8deg); }
-      92.4%        { transform: translate(0) skew(0deg); }
+    @keyframes tsukuyomi-flicker {
+      0%,82%,100%  { filter: none; }
+      83%          { filter: invert(1) hue-rotate(180deg) brightness(1.5); }
+      83.15%       { filter: none; }
+      83.3%        { filter: invert(1) hue-rotate(180deg) brightness(1.3); }
+      83.45%       { filter: none; }
+      83.6%        { filter: invert(1) hue-rotate(180deg) brightness(1.8); }
+      86.5%        { filter: invert(1) hue-rotate(180deg) brightness(1.4); }
+      87%          { filter: none; }
     }
 
-    /* Upper slice — displaced right */
-    @keyframes glitch-top {
-      0%,87%,100%  { opacity: 0; transform: translate(0); clip-path: inset(0 0 100% 0); }
-      88%          { opacity: 1; clip-path: inset(5% 0 72% 0); transform: translate(8px, 0); }
-      88.3%        { clip-path: inset(8% 0 68% 0); transform: translate(-6px, 0); }
-      88.6%        { clip-path: inset(3% 0 75% 0); transform: translate(4px, 0); }
-      89%          { opacity: 0; clip-path: inset(0 0 100% 0); }
-      92%          { opacity: 0.8; clip-path: inset(12% 0 60% 0); transform: translate(-10px, 0); }
-      92.3%        { clip-path: inset(6% 0 70% 0); transform: translate(7px, 0); }
-      92.5%        { opacity: 0; }
-    }
-
-    /* Lower slice — displaced left */
-    @keyframes glitch-bottom {
-      0%,87%,100%  { opacity: 0; transform: translate(0); clip-path: inset(100% 0 0 0); }
-      88.1%        { opacity: 1; clip-path: inset(68% 0 8% 0); transform: translate(-7px, 0); }
-      88.4%        { clip-path: inset(72% 0 4% 0); transform: translate(5px, 0); }
-      88.7%        { clip-path: inset(65% 0 12% 0); transform: translate(-3px, 0); }
-      89%          { opacity: 0; clip-path: inset(100% 0 0 0); }
-      92.1%        { opacity: 0.7; clip-path: inset(70% 0 6% 0); transform: translate(9px, 0); }
-      92.4%        { clip-path: inset(75% 0 3% 0); transform: translate(-5px, 0); }
-      92.6%        { opacity: 0; }
-    }
-
-    .glitch-wrap {
+    .hero-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3.8rem, 6.5vw, 6.5rem);
+      line-height: 0.9; letter-spacing: 0.04em;
+      color: var(--text); margin-bottom: 0.5rem;
+      opacity: 0; animation: up 0.6s ease forwards 0.5s, tsukuyomi-flicker 12s 2s infinite;
       position: relative;
-      display: inline-block;
-      animation: glitch-body 10s infinite;
     }
 
-    .glitch-wrap::before {
-      content: attr(data-text);
-      position: absolute; top: 0; left: 0;
-      width: 100%; height: 100%;
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: inherit; line-height: inherit; letter-spacing: inherit;
-      color: var(--text);
+    .hero-name .slash { color: var(--red); font-size: 0.7em; }
+
+    /* The 梓峰 overlay — visible only during the invert window */
+    .tsukuyomi-overlay {
+      position: absolute;
+      top: 0; left: 0;
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(3rem, 5.5vw, 5.5rem);
+      line-height: 0.9;
+      letter-spacing: 0.05em;
+      color: #060608;
       pointer-events: none;
-      animation: glitch-top 10s infinite;
+      white-space: nowrap;
+      opacity: 0;
+      animation: tsukuyomi-name 12s 2s infinite;
     }
 
-    .glitch-wrap::after {
-      content: attr(data-text);
-      position: absolute; top: 0; left: 0;
-      width: 100%; height: 100%;
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: inherit; line-height: inherit; letter-spacing: inherit;
-      color: var(--text);
-      pointer-events: none;
-      animation: glitch-bottom 10s infinite;
+    @keyframes tsukuyomi-name {
+      0%,83.5%,87.1%,100% { opacity: 0; }
+      83.6%,87%           { opacity: 1; }
     }
 
     /* Project title: fast slice distortion on hover */
@@ -222,15 +205,7 @@
       50%      { box-shadow: 0 0 0 4px rgba(181,37,37,0); }
     }
 
-    .hero-name {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(3.8rem, 6.5vw, 6.5rem);
-      line-height: 0.9; letter-spacing: 0.04em;
-      color: var(--text); margin-bottom: 0.5rem;
-      opacity: 0; animation: up 0.6s ease forwards 0.5s;
-    }
-
-    .hero-name .slash { color: var(--red); font-size: 0.7em; }
+    /* hero-name defined in tsukuyomi block above */
 
     .hero-jp {
       font-family: 'Noto Serif JP', serif;
@@ -466,7 +441,37 @@
 <body>
 
   <canvas id="rain"></canvas>
-  <div class="jp-mark">影</div>
+  <!-- Shuriken watermark -->
+  <svg class="shuriken-mark" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <!-- 4-bladed shuriken: two overlapping rhombus shapes rotated 45 degrees -->
+    <!-- Blade set 1: horizontal/vertical -->
+    <g fill="#8b1a1a">
+      <!-- Top blade -->
+      <path d="M 100,100 L 85,65 Q 100,10 115,65 Z"/>
+      <!-- Bottom blade -->
+      <path d="M 100,100 L 115,135 Q 100,190 85,135 Z"/>
+      <!-- Left blade -->
+      <path d="M 100,100 L 65,115 Q 10,100 65,85 Z"/>
+      <!-- Right blade -->
+      <path d="M 100,100 L 135,85 Q 190,100 135,115 Z"/>
+      <!-- Blade set 2: diagonal (rotated 45deg) -->
+      <!-- Top-right blade -->
+      <path d="M 100,100 L 120,72 Q 155,40 128,78 Z" opacity="0.9"/>
+      <path d="M 100,100 L 128,78 Q 162,45 122,72 Z" opacity="0.9"/>
+      <!-- Bottom-left blade -->
+      <path d="M 100,100 L 80,128 Q 45,160 72,122 Z" opacity="0.9"/>
+      <path d="M 100,100 L 72,122 Q 38,155 78,128 Z" opacity="0.9"/>
+      <!-- Top-left blade -->
+      <path d="M 100,100 L 72,78 Q 38,45 80,72 Z" opacity="0.9"/>
+      <path d="M 100,100 L 80,72 Q 45,38 72,78 Z" opacity="0.9"/>
+      <!-- Bottom-right blade -->
+      <path d="M 100,100 L 128,122 Q 162,155 120,128 Z" opacity="0.9"/>
+      <path d="M 100,100 L 120,128 Q 155,160 128,122 Z" opacity="0.9"/>
+      <!-- Centre ring -->
+      <circle cx="100" cy="100" r="10" fill="none" stroke="#8b1a1a" stroke-width="3"/>
+      <circle cx="100" cy="100" r="5"/>
+    </g>
+  </svg>
 
   <!-- NAV -->
   <nav>
