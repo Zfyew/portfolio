@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Billy Yew</title>
+  <title>Profile · Billy Yew</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400&family=JetBrains+Mono:wght@300;400;500&family=Bebas+Neue&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -36,17 +36,12 @@
       cursor: crosshair;
     }
 
-    body::before {
-      content: '';
-      position: fixed; inset: 0;
-      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.18) 3px, rgba(0,0,0,0.18) 4px);
-      pointer-events: none; z-index: 51;
-    }
-
     body::after {
       content: '';
       position: fixed; inset: 0;
-      background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.85) 100%);
+      background:
+        linear-gradient(to right, rgba(0,0,0,0.4) 0%, transparent 12%, transparent 88%, rgba(0,0,0,0.4) 100%),
+        linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 10%, transparent 90%, rgba(0,0,0,0.3) 100%);
       pointer-events: none; z-index: 50;
     }
 
@@ -131,7 +126,7 @@
 
     .hero-name {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(3.8rem, 6.5vw, 6.5rem);
+      font-size: clamp(3.5rem, 5.5vw, 6rem);
       line-height: 0.9; letter-spacing: 0.04em;
       color: var(--text);
       margin-bottom: 0;
@@ -151,7 +146,7 @@
       justify-content: flex-start;
       padding-left: 2.5rem;
       font-family: 'Noto Serif JP', serif;
-      font-size: clamp(3.8rem, 6.5vw, 6.5rem);
+      font-size: clamp(3.5rem, 5.5vw, 6rem);
       line-height: 0.9;
       letter-spacing: 0.05em;
       color: #d4d4dc;
@@ -225,7 +220,7 @@
 
     .hero-bio {
       font-size: 0.75rem; color: var(--muted2);
-      line-height: 2; max-width: 400px; margin-bottom: 3rem;
+      line-height: 2; margin-bottom: 3rem;
       border-left: 1px solid var(--red-dim); padding-left: 1.25rem;
       opacity: 0; animation: up 0.6s ease forwards 0.8s;
     }
@@ -260,7 +255,7 @@
 
     /* ── DOSSIER ── */
     .hero-right {
-      width: 320px; flex-shrink: 0; padding-top: 3rem;
+      width: 340px; flex-shrink: 0; padding-top: 3rem;
       opacity: 0; animation: up 0.6s ease forwards 0.7s;
     }
 
@@ -287,12 +282,12 @@
 
     .d-key {
       color: var(--muted2); letter-spacing: 0.1em;
-      text-transform: uppercase; font-size: 0.58rem; flex-shrink: 0;
+      text-transform: uppercase; font-size: 0.62rem; flex-shrink: 0;
     }
 
     .d-val {
       color: var(--nav-text); text-align: right;
-      font-size: 0.65rem; line-height: 1.6;
+      font-size: 0.72rem; line-height: 1.6;
     }
 
     .d-val.red { color: var(--red-bright); }
@@ -343,13 +338,13 @@
     }
 
     /* ── ABOUT ── */
-    .about-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 5rem; }
+    .about-grid { display: grid; grid-template-columns: 1fr 400px; gap: 5rem; }
 
     .about-text { font-size: 0.75rem; color: var(--muted2); line-height: 2.2; }
     .about-text p + p { margin-top: 1.25rem; }
     .about-text strong { color: var(--text); font-weight: 400; }
 
-    .about-aside { display: flex; flex-direction: column; gap: 2rem; }
+    .about-aside { display: flex; flex-direction: column; align-items: flex-start; display: flex; flex-direction: column; gap: 2rem; }
 
     .aside-block { position: relative; padding-left: 1.25rem; }
 
@@ -413,11 +408,18 @@
     /* ── FOOTER ── */
     footer {
       position: relative; z-index: 1;
+      width: 100%;
+      border-top: 1px solid var(--border2);
+      background: rgba(6,6,8,0.98);
+    }
+
+    .footer-inner {
       max-width: 1080px; margin: 0 auto;
       padding: 2rem 4rem;
-      border-top: 1px solid var(--border2);
       display: flex; justify-content: space-between; align-items: center;
     }
+
+
 
     footer span { font-size: 0.62rem; color: var(--nav-text); letter-spacing: 0.08em; }
     footer a { color: var(--nav-text); text-decoration: none; transition: color 0.2s; }
@@ -426,21 +428,23 @@
 
     /* ── SCROLL INDICATOR ── */
     .scroll-indicator {
-      position: absolute;
-      bottom: 2rem; left: 4rem;
+      position: fixed;
+      bottom: 2.5rem; right: 3rem;
       display: flex; flex-direction: column;
-      align-items: center; gap: 0.5rem;
+      align-items: center; gap: 0.6rem;
       opacity: 0; animation: up 0.6s ease forwards 1.5s;
-      z-index: 1;
+      z-index: 10;
     }
 
     .scroll-label {
-      font-size: 0.48rem; color: var(--muted2);
-      letter-spacing: 0.35em; text-transform: uppercase;
+      font-size: 0.55rem; color: var(--nav-text);
+      letter-spacing: 0.3em; text-transform: uppercase;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
     }
 
     .scroll-line {
-      width: 1px; height: 44px;
+      width: 1px; height: 60px;
       background: var(--border2);
       position: relative; overflow: hidden;
     }
@@ -448,13 +452,13 @@
     .scroll-line::after {
       content: '';
       position: absolute; top: -100%; left: 0;
-      width: 100%; height: 60%;
+      width: 100%; height: 50%;
       background: linear-gradient(180deg, transparent, var(--red-bright), transparent);
-      animation: scroll-drop 2.2s ease-in-out infinite 1.8s;
+      animation: scroll-drop 2s ease-in-out infinite 1.8s;
     }
 
     @keyframes scroll-drop {
-      0%   { top: -60%; }
+      0%   { top: -50%; }
       100% { top: 110%; }
     }
 
@@ -464,7 +468,47 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
+
+    /* ── RESPONSIVE SCALING ── */
+
+    @media (min-width: 1280px) {
+      .hero, section, .divider { max-width: 1280px; margin: 0 auto; padding-left: 5rem; padding-right: 5rem; }
+      .footer-inner { max-width: 1280px; margin: 0 auto; padding: 2rem 5rem; }
+      .hero-right { width: 380px; }
+      .about-grid { grid-template-columns: 1fr 380px; gap: 4rem; }
+    }
+
+    @media (min-width: 1380px) {
+      .hero, section, .divider { max-width: 1420px; margin: 0 auto; padding-left: 6rem; padding-right: 6rem; }
+      .footer-inner { max-width: 1420px; margin: 0 auto; padding: 2rem 6rem; }
+      .hero { gap: 4rem; }
+      .hero-right { width: 440px; }
+      .hero-name { font-size: clamp(3.5rem, 5.5vw, 6rem); }
+      .sec-title { font-size: clamp(3rem, 5vw, 5.5rem); }
+      .hero-bio { font-size: 0.8rem; }
+      .about-text { font-size: 0.8rem; }
+      .about-grid { grid-template-columns: 1fr 440px; gap: 4rem; }
+      .proj-desc { font-size: 0.75rem; }
+    }
+
+    @media (min-width: 1920px) {
+      .hero, section, .divider { max-width: 1700px; margin: 0 auto; padding-left: 8rem; padding-right: 8rem; }
+      .footer-inner { max-width: 1700px; margin: 0 auto; padding: 2rem 8rem; }
+      .hero-right { width: 520px; }
+      .about-grid { grid-template-columns: 1fr 520px; gap: 7rem; }
+    }
+
+    @media (min-width: 2400px) {
+      .hero, section, .divider { max-width: 2000px; margin: 0 auto; }
+      .footer-inner { max-width: 2000px; margin: 0 auto; }
+    }
+
     /* ── RESPONSIVE ── */
+    @media (max-width: 1024px) and (min-width: 801px) {
+      .hero-right { width: 300px; }
+      .hero { gap: 3rem; }
+    }
+
     @media (max-width: 800px) {
       nav, .hero, section, footer, .divider { padding-left: 1.5rem; padding-right: 1.5rem; }
       .hero { flex-direction: column; min-height: auto; padding-top: 6rem; padding-bottom: 4rem; gap: 3rem; }
@@ -510,7 +554,7 @@
       </div>
       <p class="hero-jp">影</p>
       <p class="hero-bio">
-        IT engineer. Night person. Quietly curious about how things work — and what happens when you know enough to take them apart.
+        IT engineer. Night person. Quietly curious about how things work —<br>and what happens when you know enough to take them apart.
       </p>
       <div class="hero-ctas">
         <a href="#projects" class="cta-main">View Projects</a>
@@ -558,11 +602,9 @@
   </div>
 
   <!-- SCROLL INDICATOR -->
-  <div style="position:relative; max-width:1080px; margin:0 auto; padding:0 4rem;">
-    <div class="scroll-indicator" style="left:auto; right:4rem;">
-      <span class="scroll-label">Scroll</span>
-      <div class="scroll-line"></div>
-    </div>
+  <div class="scroll-indicator">
+    <span class="scroll-label">Scroll</span>
+    <div class="scroll-line"></div>
   </div>
 
   <div class="divider"><div class="div-line"></div></div>
@@ -682,12 +724,14 @@
 
   <!-- FOOTER -->
   <footer>
-    <span>Billy Yew &nbsp;·&nbsp; London &nbsp;·&nbsp; 影</span>
-    <span>
-      <a href="https://github.com/Zfyew" target="_blank">GitHub</a>
-      &nbsp;·&nbsp;
-      <a href="https://www.linkedin.com/in/billy-yew-359b0a1b3/" target="_blank">LinkedIn</a>
-    </span>
+    <div class="footer-inner">
+      <span>Billy Yew &nbsp;·&nbsp; London &nbsp;·&nbsp; 影</span>
+      <span>
+        <a href="https://github.com/Zfyew" target="_blank">GitHub</a>
+        &nbsp;·&nbsp;
+        <a href="https://www.linkedin.com/in/billy-yew-359b0a1b3/" target="_blank">LinkedIn</a>
+      </span>
+    </div>
   </footer>
 
   <script>
