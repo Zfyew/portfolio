@@ -39,18 +39,18 @@
     body::before {
       content: '';
       position: fixed; inset: 0;
-      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px);
-      pointer-events: none; z-index: 999;
+      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.18) 3px, rgba(0,0,0,0.18) 4px);
+      pointer-events: none; z-index: 51;
     }
 
     body::after {
       content: '';
       position: fixed; inset: 0;
-      background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.7) 100%);
-      pointer-events: none; z-index: 998;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.85) 100%);
+      pointer-events: none; z-index: 50;
     }
 
-    #rain { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.18; }
+    #rain { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.35; }
 
     .shuriken-mark {
       position: fixed; right: -3rem; top: 50%;
@@ -88,7 +88,7 @@
     .nav-cloud {
       width: 48px; height: 22px;
       flex-shrink: 0;
-      filter: brightness(0.65) saturate(0.85) drop-shadow(0 0 1px rgba(255,255,255,0.9)) drop-shadow(0 0 2px rgba(255,255,255,0.5));
+      filter: brightness(0.65) saturate(0.85);
     }
 
     .nav-links { display: flex; gap: 3rem; list-style: none; }
@@ -100,11 +100,12 @@
     }
 
     .nav-links a::before {
-      content: '//'; margin-right: 0.4em;
-      color: var(--red-bright); opacity: 0; transition: opacity 0.2s;
+      content: '//';
+      margin-right: 0.4em;
+      color: var(--red-bright);
+      opacity: 0;
+      transition: opacity 0.2s, margin 0.2s;
     }
-
-    .nav-links a:hover::before { opacity: 1 !important; }
 
     .nav-links a:hover { color: var(--nav-hover); }
     .nav-links a:hover::before { opacity: 1; }
@@ -146,6 +147,7 @@
       display: flex;
       align-items: center;
       justify-content: flex-start;
+      padding-left: 2.5rem;
       font-family: 'Noto Serif JP', serif;
       font-size: clamp(3.8rem, 6.5vw, 6.5rem);
       line-height: 0.9;
@@ -319,12 +321,6 @@
 
     .div-line { height: 1px; background: var(--border); position: relative; }
 
-    .div-line::before {
-      content: ''; position: absolute; left: 0; top: 0;
-      height: 100%; width: 80px;
-      background: linear-gradient(90deg, var(--red-dim), transparent);
-    }
-
     /* ── SECTIONS ── */
     section { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 6rem 4rem; }
 
@@ -481,8 +477,6 @@
       </p>
       <div class="hero-ctas">
         <a href="#projects" class="cta-main">View Projects</a>
-        <a href="https://github.com/Zfyew" target="_blank" class="cta-ghost">GitHub</a>
-        <a href="https://www.linkedin.com/in/billy-yew-359b0a1b3/" target="_blank" class="cta-ghost">LinkedIn</a>
       </div>
     </div>
 
