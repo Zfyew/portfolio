@@ -6,7 +6,7 @@ Live at [zfyew.github.io/portfolio](https://zfyew.github.io/portfolio)
 
 ---
 
-The design went through a lot of iterations. Started minimal, ended up going full Akatsuki theme. Deep crimson, rain animation, shuriken watermark in the background. There's a Tsukuyomi effect on my name that triggers every 15 seconds if you wait for it.
+The design went through a lot of iterations. Started minimal, ended up going full Akatsuki theme. Deep crimson, rain animation, shuriken watermark in the background. There's a Glitching/Tsukuyomi effect on my name that triggers every 10 seconds if you wait for it.
 
 Fonts are Bebas Neue, JetBrains Mono and Noto Serif JP.
 
