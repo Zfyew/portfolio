@@ -1,22 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Billy Yew</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400&family=JetBrains+Mono:wght@300;400;500&family=Bebas+Neue&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #0d0d0f;
-      --surface: #141417;
-      --border: #222228;
-      --accent: #00e5ff;
-      --accent2: #7b61ff;
-      --text: #e8e8f0;
-      --muted: #666680;
-      --card: #16161a;
+      --bg:       #060608;
+      --bg2:      #0a0a0e;
+      --border:   #13131a;
+      --border2:  #1c1c26;
+      --red:      #c0392b;
+      --red-dim:  #5c1a14;
+      --red-glow: rgba(192,57,43,0.12);
+      --text:     #d4d4dc;
+      --muted:    #3a3a4a;
+      --muted2:   #555568;
+      --faint:    rgba(192,57,43,0.04);
+      --gold:     #8b7355;
     }
 
     html { scroll-behavior: smooth; }
@@ -24,33 +28,62 @@
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: 'Syne', sans-serif;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 300;
       min-height: 100vh;
       overflow-x: hidden;
+      cursor: crosshair;
     }
 
-    /* ── NOISE OVERLAY ── */
+    /* ── SCANLINES ── */
     body::before {
       content: '';
       position: fixed;
       inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(0,0,0,0.08) 3px,
+        rgba(0,0,0,0.08) 4px
+      );
       pointer-events: none;
-      z-index: 0;
-      opacity: 0.4;
+      z-index: 999;
     }
 
-    /* ── GRID BACKGROUND ── */
+    /* ── VIGNETTE ── */
     body::after {
       content: '';
       position: fixed;
       inset: 0;
-      background-image:
-        linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
-      background-size: 60px 60px;
+      background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.7) 100%);
+      pointer-events: none;
+      z-index: 998;
+    }
+
+    /* ── RAIN CANVAS ── */
+    #rain {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.18;
+    }
+
+    /* ── JAPANESE WATERMARK ── */
+    .jp-mark {
+      position: fixed;
+      right: -20px;
+      top: 50%;
+      transform: translateY(-50%) rotate(0deg);
+      font-family: 'Noto Serif JP', serif;
+      font-size: 11rem;
+      color: rgba(192,57,43,0.04);
+      writing-mode: vertical-rl;
+      letter-spacing: 0.1em;
       pointer-events: none;
       z-index: 0;
+      user-select: none;
     }
 
     /* ── NAV ── */
@@ -61,36 +94,64 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1.25rem 3rem;
-      background: rgba(13,13,15,0.85);
+      padding: 1.25rem 4rem;
+      background: rgba(6,6,8,0.95);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
     }
 
     .nav-logo {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.85rem;
-      color: var(--accent);
-      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.7rem;
+      color: var(--muted2);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .nav-logo-mark {
+      width: 18px; height: 18px;
+      border: 1px solid var(--red-dim);
+      transform: rotate(45deg);
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .nav-logo-mark::after {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      background: var(--red);
+      opacity: 0.6;
     }
 
     .nav-links {
       display: flex;
-      gap: 2.5rem;
+      gap: 3rem;
       list-style: none;
     }
 
     .nav-links a {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.75rem;
+      font-size: 0.62rem;
       color: var(--muted);
       text-decoration: none;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
       transition: color 0.2s;
+      position: relative;
     }
 
-    .nav-links a:hover { color: var(--accent); }
+    .nav-links a::before {
+      content: '//';
+      margin-right: 0.4em;
+      color: var(--red-dim);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover::before { opacity: 1; }
 
     /* ── HERO ── */
     .hero {
@@ -99,360 +160,473 @@
       min-height: 100vh;
       display: flex;
       align-items: center;
-      padding: 0 3rem;
-      max-width: 1100px;
+      padding: 0 4rem;
+      max-width: 1080px;
       margin: 0 auto;
+      gap: 5rem;
     }
 
-    .hero-inner {
-      padding-top: 5rem;
-    }
+    .hero-left { flex: 1; padding-top: 3rem; }
 
-    .hero-tag {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.75rem;
-      color: var(--accent);
-      letter-spacing: 0.15em;
+    /* Classification stamp */
+    .stamp {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      border: 1px solid var(--red-dim);
+      padding: 0.3rem 0.75rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.58rem;
+      color: var(--red);
+      letter-spacing: 0.25em;
       text-transform: uppercase;
-      margin-bottom: 1.5rem;
       opacity: 0;
-      animation: fadeUp 0.6s ease forwards 0.2s;
+      animation: up 0.6s ease forwards 0.3s;
+    }
+
+    .stamp-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--red);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%,100% { opacity: 1; box-shadow: 0 0 0 0 rgba(192,57,43,0.4); }
+      50%      { opacity: 0.6; box-shadow: 0 0 0 4px rgba(192,57,43,0); }
     }
 
     .hero-name {
-      font-size: clamp(3.5rem, 8vw, 7rem);
-      font-weight: 800;
-      line-height: 0.95;
-      letter-spacing: -0.03em;
-      margin-bottom: 1.5rem;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4.5rem, 9vw, 8rem);
+      line-height: 0.9;
+      letter-spacing: 0.04em;
+      color: var(--text);
+      margin-bottom: 0.5rem;
       opacity: 0;
-      animation: fadeUp 0.6s ease forwards 0.35s;
+      animation: up 0.6s ease forwards 0.5s;
     }
 
-    .hero-name span {
-      display: block;
-      background: linear-gradient(135deg, var(--text) 0%, var(--muted) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    .hero-name .slash {
+      color: var(--red);
+      font-size: 0.7em;
     }
 
-    .hero-name .accent-line {
-      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    .hero-jp {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 1.1rem;
+      color: var(--muted);
+      letter-spacing: 0.3em;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: up 0.6s ease forwards 0.65s;
     }
 
     .hero-bio {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.9rem;
-      color: var(--muted);
-      line-height: 1.8;
-      max-width: 480px;
-      margin-bottom: 2.5rem;
-      opacity: 0;
-      animation: fadeUp 0.6s ease forwards 0.5s;
-    }
-
-    .hero-links {
-      display: flex;
-      gap: 1rem;
-      opacity: 0;
-      animation: fadeUp 0.6s ease forwards 0.65s;
-    }
-
-    .btn {
-      font-family: 'DM Mono', monospace;
       font-size: 0.75rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 0.75rem 1.75rem;
-      border-radius: 3px;
-      text-decoration: none;
-      transition: all 0.2s;
-      cursor: pointer;
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: var(--bg);
-      border: 1px solid var(--accent);
-    }
-
-    .btn-primary:hover {
-      background: transparent;
-      color: var(--accent);
-    }
-
-    .btn-ghost {
-      background: transparent;
-      color: var(--muted);
-      border: 1px solid var(--border);
-    }
-
-    .btn-ghost:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    /* ── SCROLL INDICATOR ── */
-    .scroll-hint {
-      position: absolute;
-      bottom: 2.5rem;
-      left: 3rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-family: 'DM Mono', monospace;
-      font-size: 0.7rem;
-      color: var(--muted);
-      letter-spacing: 0.1em;
+      color: var(--muted2);
+      line-height: 2;
+      max-width: 400px;
+      margin-bottom: 3rem;
+      border-left: 1px solid var(--red-dim);
+      padding-left: 1.25rem;
       opacity: 0;
-      animation: fadeUp 0.6s ease forwards 0.9s;
+      animation: up 0.6s ease forwards 0.8s;
     }
 
-    .scroll-line {
-      width: 40px;
-      height: 1px;
-      background: linear-gradient(90deg, var(--accent), transparent);
+    .hero-ctas {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+      opacity: 0;
+      animation: up 0.6s ease forwards 1.0s;
+    }
+
+    .cta-main {
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--red);
+      text-decoration: none;
+      border: 1px solid var(--red-dim);
+      padding: 0.6rem 1.5rem;
+      transition: all 0.2s;
       position: relative;
       overflow: hidden;
     }
 
-    .scroll-line::after {
+    .cta-main::before {
       content: '';
       position: absolute;
-      top: 0; left: -100%;
-      width: 100%; height: 100%;
-      background: var(--accent);
-      animation: scanline 2s ease-in-out infinite;
+      inset: 0;
+      background: var(--red);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.2s;
+      z-index: -1;
+    }
+
+    .cta-main:hover { color: var(--bg); }
+    .cta-main:hover::before { transform: scaleX(1); }
+
+    .cta-ghost {
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .cta-ghost:hover { color: var(--text); }
+
+    /* ── HERO RIGHT — DOSSIER ── */
+    .hero-right {
+      width: 320px;
+      flex-shrink: 0;
+      padding-top: 3rem;
+      opacity: 0;
+      animation: up 0.6s ease forwards 0.7s;
+    }
+
+    .dossier {
+      border: 1px solid var(--border2);
+      background: var(--bg2);
+      position: relative;
+    }
+
+    .dossier::before {
+      content: 'DOSSIER';
+      position: absolute;
+      top: -9px; left: 1.25rem;
+      font-size: 0.55rem;
+      letter-spacing: 0.3em;
+      color: var(--red);
+      background: var(--bg2);
+      padding: 0 0.5rem;
+    }
+
+    .dossier-body {
+      padding: 1.75rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .dossier-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 0.65rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.68rem;
+      gap: 1rem;
+    }
+
+    .dossier-row:last-child { border-bottom: none; }
+
+    .d-key {
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-size: 0.58rem;
+      flex-shrink: 0;
+    }
+
+    .d-val {
+      color: var(--text);
+      opacity: 0.55;
+      text-align: right;
+      font-size: 0.65rem;
+    }
+
+    .d-val.red { color: var(--red); opacity: 0.7; }
+
+    .dossier-footer {
+      padding: 0.75rem 1.5rem;
+      border-top: 1px solid var(--border2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .d-status {
+      font-size: 0.58rem;
+      color: var(--red);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .d-cursor {
+      display: inline-block;
+      width: 6px; height: 0.85em;
+      background: var(--red);
+      opacity: 0.7;
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .d-id {
+      font-size: 0.55rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      position: relative;
+      z-index: 1;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 4rem;
+    }
+
+    .div-line {
+      height: 1px;
+      background: var(--border);
+      position: relative;
+    }
+
+    .div-line::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0;
+      height: 100%;
+      width: 80px;
+      background: linear-gradient(90deg, var(--red-dim), transparent);
     }
 
     /* ── SECTIONS ── */
     section {
       position: relative;
       z-index: 1;
-      max-width: 1100px;
+      max-width: 1080px;
       margin: 0 auto;
-      padding: 6rem 3rem;
+      padding: 6rem 4rem;
     }
 
-    .section-label {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.7rem;
-      color: var(--accent);
-      letter-spacing: 0.2em;
+    .eyebrow {
+      font-size: 0.58rem;
+      color: var(--red);
+      letter-spacing: 0.3em;
       text-transform: uppercase;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
     }
 
-    .section-title {
-      font-size: clamp(1.8rem, 4vw, 2.8rem);
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      margin-bottom: 3rem;
+    .eyebrow::after {
+      content: '';
+      height: 1px;
+      width: 40px;
+      background: var(--red-dim);
+    }
+
+    .sec-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 5vw, 4rem);
       color: var(--text);
+      letter-spacing: 0.05em;
+      margin-bottom: 3.5rem;
+      line-height: 1;
     }
 
     /* ── ABOUT ── */
     .about-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4rem;
-      align-items: start;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 5rem;
     }
 
     .about-text {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.88rem;
-      color: var(--muted);
-      line-height: 1.9;
+      font-size: 0.75rem;
+      color: var(--muted2);
+      line-height: 2.2;
     }
 
     .about-text p + p { margin-top: 1.25rem; }
 
-    .about-tags {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .tag-row {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 0.9rem 1.25rem;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      font-family: 'DM Mono', monospace;
-      font-size: 0.78rem;
-      color: var(--muted);
-      transition: border-color 0.2s, color 0.2s;
-    }
-
-    .tag-row:hover {
-      border-color: var(--accent);
+    .about-text strong {
       color: var(--text);
+      font-weight: 400;
     }
 
-    .tag-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--accent);
-      flex-shrink: 0;
+    .about-text .redmark {
+      color: var(--red);
+      font-weight: 400;
     }
 
-    .tag-dot.purple { background: var(--accent2); }
-    .tag-dot.green { background: #00ff88; }
-    .tag-dot.orange { background: #ff6b35; }
-
-    /* ── PROJECTS ── */
-    .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.25rem;
-    }
-
-    .project-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 1.75rem;
-      text-decoration: none;
-      transition: border-color 0.2s, transform 0.2s;
+    .about-aside {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
-      position: relative;
-      overflow: hidden;
+      gap: 2rem;
     }
 
-    .project-card::before {
+    .aside-block {
+      position: relative;
+      padding-left: 1.25rem;
+    }
+
+    .aside-block::before {
       content: '';
       position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 0.3s ease;
+      left: 0; top: 0; bottom: 0;
+      width: 1px;
+      background: linear-gradient(180deg, var(--red-dim), transparent);
     }
 
-    .project-card:hover {
-      border-color: var(--border);
-      transform: translateY(-3px);
+    .aside-label {
+      font-size: 0.55rem;
+      color: var(--red);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+      opacity: 0.7;
     }
 
-    .project-card:hover::before { transform: scaleX(1); }
-
-    .project-header {
+    .aside-items {
       display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.4rem;
     }
 
-    .project-icon {
-      font-size: 1.5rem;
-    }
-
-    .project-lang {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.68rem;
-      color: var(--muted);
-      letter-spacing: 0.08em;
-      padding: 0.25rem 0.6rem;
-      border: 1px solid var(--border);
-      border-radius: 2px;
-    }
-
-    .project-name {
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--text);
-      letter-spacing: -0.01em;
-    }
-
-    .project-desc {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.78rem;
-      color: var(--muted);
-      line-height: 1.7;
-      flex: 1;
-    }
-
-    .project-footer {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-family: 'DM Mono', monospace;
+    .aside-item {
       font-size: 0.7rem;
-      color: var(--accent);
+      color: var(--text);
+      opacity: 0.3;
+      transition: opacity 0.2s;
+    }
+
+    .aside-item:hover { opacity: 0.8; }
+
+    /* ── PROJECTS ── */
+    .proj-list { display: flex; flex-direction: column; }
+
+    .proj-row {
+      display: grid;
+      grid-template-columns: 3rem 1fr 9rem;
+      gap: 2rem;
+      padding: 2rem 0;
+      border-bottom: 1px solid var(--border);
+      align-items: start;
+      text-decoration: none;
+      transition: background 0.2s, padding 0.2s;
+      border-radius: 2px;
+      cursor: default;
+    }
+
+    .proj-row:first-child { border-top: 1px solid var(--border); }
+
+    .proj-row:hover {
+      background: var(--faint);
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+      margin: 0 -0.75rem;
+    }
+
+    .proj-num {
+      font-size: 0.58rem;
+      color: var(--red);
+      opacity: 0.4;
+      padding-top: 0.3rem;
+      letter-spacing: 0.1em;
+    }
+
+    .proj-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem;
+      color: var(--text);
+      opacity: 0.8;
       letter-spacing: 0.05em;
+      margin-bottom: 0.4rem;
     }
 
-    .project-footer.coming {
+    .proj-desc {
+      font-size: 0.7rem;
+      color: var(--muted2);
+      line-height: 1.9;
+    }
+
+    .proj-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.4rem;
+      padding-top: 0.3rem;
+    }
+
+    .proj-lang {
+      font-size: 0.58rem;
       color: var(--muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      opacity: 0.5;
     }
 
-    /* ── COMING SOON CARD ── */
-    .project-card.wip {
-      opacity: 0.5;
-      pointer-events: none;
+    .proj-status {
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      opacity: 0.35;
     }
 
     /* ── FOOTER ── */
     footer {
       position: relative;
       z-index: 1;
-      border-top: 1px solid var(--border);
-      padding: 2rem 3rem;
-      max-width: 1100px;
+      max-width: 1080px;
       margin: 0 auto;
+      padding: 2rem 4rem;
+      border-top: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
-    footer p {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.72rem;
+    footer span {
+      font-size: 0.6rem;
       color: var(--muted);
+      letter-spacing: 0.08em;
     }
 
-    footer a {
-      color: var(--accent);
-      text-decoration: none;
-    }
+    footer a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    footer a:hover { color: var(--text); }
 
     /* ── ANIMATIONS ── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(16px); }
+    @keyframes up {
+      from { opacity: 0; transform: translateY(10px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    @keyframes scanline {
-      0%   { left: -100%; }
-      50%  { left: 100%; }
-      100% { left: 100%; }
-    }
-
     /* ── RESPONSIVE ── */
-    @media (max-width: 768px) {
-      nav { padding: 1rem 1.5rem; }
-      .hero, section { padding-left: 1.5rem; padding-right: 1.5rem; }
-      .hero-name { font-size: 3rem; }
-      .about-grid { grid-template-columns: 1fr; gap: 2rem; }
-      footer { flex-direction: column; gap: 1rem; text-align: center; }
+    @media (max-width: 800px) {
+      nav, .hero, section, footer, .divider { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .hero { flex-direction: column; min-height: auto; padding-top: 6rem; padding-bottom: 4rem; gap: 3rem; }
+      .hero-right { width: 100%; }
+      .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .proj-row { grid-template-columns: 2.5rem 1fr; }
+      .proj-meta { display: none; }
+      footer { flex-direction: column; gap: 0.75rem; }
     }
   </style>
 </head>
 <body>
 
+  <canvas id="rain"></canvas>
+  <div class="jp-mark">忍者　暗殺者　影</div>
+
   <!-- NAV -->
   <nav>
-    <span class="nav-logo">// billy yew</span>
+    <div class="nav-logo">
+      <div class="nav-logo-mark"></div>
+      Billy Yew
+    </div>
     <ul class="nav-links">
       <li><a href="#about">About</a></li>
       <li><a href="#projects">Projects</a></li>
@@ -462,121 +636,235 @@
 
   <!-- HERO -->
   <div class="hero">
-    <div class="hero-inner">
-      <p class="hero-tag">// IT Support Engineer · London</p>
-      <h1 class="hero-name">
-        <span>Billy</span>
-        <span class="accent-line">Yew.</span>
-      </h1>
+    <div class="hero-left">
+      <div class="stamp">
+        <span class="stamp-dot"></span>
+        Operative Profile &nbsp;·&nbsp; London, UK
+      </div>
+      <h1 class="hero-name">Billy<br><span class="slash">/</span>Yew</h1>
+      <p class="hero-jp">夜の者　·　影の中に</p>
       <p class="hero-bio">
-        IT professional by day, curious tinkerer by night. I'm into tech, scripting, ethical hacking and building things — whether that's a PC, a script, or something I probably shouldn't have started at midnight.
+        IT engineer. Night person. Quietly curious about how things work — and what happens when you know enough to take them apart. Automation, AI, hacking. Learning in the dark.
       </p>
-      <div class="hero-links">
-        <a href="#projects" class="btn btn-primary">View Projects</a>
-        <a href="https://github.com/Zfyew" target="_blank" class="btn btn-ghost">GitHub Profile</a>
+      <div class="hero-ctas">
+        <a href="#projects" class="cta-main">View Projects</a>
+        <a href="https://github.com/Zfyew" target="_blank" class="cta-ghost">GitHub</a>
+        <a href="https://www.linkedin.com/in/billy-yew-359b0a1b3/" target="_blank" class="cta-ghost">LinkedIn</a>
       </div>
     </div>
-    <div class="scroll-hint">
-      <span class="scroll-line"></span>
-      scroll
+
+    <div class="hero-right">
+      <div class="dossier">
+        <div class="dossier-body">
+          <div class="dossier-row">
+            <span class="d-key">Designation</span>
+            <span class="d-val">Billy Yew</span>
+          </div>
+          <div class="dossier-row">
+            <span class="d-key">Location</span>
+            <span class="d-val">London, UK</span>
+          </div>
+          <div class="dossier-row">
+            <span class="d-key">Cover</span>
+            <span class="d-val">IT Support Engineer</span>
+          </div>
+          <div class="dossier-row">
+            <span class="d-key">Hours</span>
+            <span class="d-val">Nocturnal</span>
+          </div>
+          <div class="dossier-row">
+            <span class="d-key">Skills</span>
+            <span class="d-val">Jamf · Entra ID · Python · PowerShell</span>
+          </div>
+          <div class="dossier-row">
+            <span class="d-key">Interests</span>
+            <span class="d-val">Hacking · AI · Automation · Gaming · PC Building</span>
+          </div>
+          <div class="dossier-row">
+            <span class="d-key">Objective</span>
+            <span class="d-val red">Cloud / Cyber Security</span>
+          </div>
+        </div>
+        <div class="dossier-footer">
+          <span class="d-status"><span class="d-cursor"></span> Active</span>
+          <span class="d-id">ID-ZFY-2025</span>
+        </div>
+      </div>
     </div>
   </div>
 
+  <div class="divider"><div class="div-line"></div></div>
+
   <!-- ABOUT -->
   <section id="about">
-    <p class="section-label">// 001</p>
-    <h2 class="section-title">About Me</h2>
+    <p class="eyebrow">Intel</p>
+    <h2 class="sec-title">About</h2>
     <div class="about-grid">
       <div class="about-text">
-        <p>
-          IT Support Engineer based in London with a background spanning endpoint management, identity security, SaaS administration and scripted automation. Currently working at UnderwriteMe, supporting a macOS fleet and a globally distributed team.
-        </p>
-        <p>
-          Outside of work I enjoy gaming, building PCs and getting into rabbit holes around ethical hacking and programming. Most of the projects here started as "I wonder if I can build that."
-        </p>
-        <p>
-          Looking to grow into cloud engineering or cyber security — these projects are part of that journey.
-        </p>
+        <p>IT Support Engineer by day — or more accurately, by night. I'm naturally <strong>nocturnal and introverted</strong>. I think better when it's quiet and dark and there's nobody around. Cold weather over warmth, every time.</p>
+        <p>I work with <strong>Jamf Pro, Microsoft Entra ID, Zscaler</strong> and a range of SaaS tools — managing endpoints, automating the boring parts, and troubleshooting the things nobody else wants to look at.</p>
+        <p>I'm genuinely fascinated by <strong>automation and AI</strong> — the idea that you can write something once and have it work silently in the background indefinitely is something I find hard to stop thinking about.</p>
+        <p>Growing up, <strong class="redmark">hacking always looked cool</strong>. Films, games, the idea of moving through systems unseen. I never learned it properly — until now. These projects are where that starts.</p>
+        <p>Outside work: <strong>PC gaming, building PCs</strong>, and rabbit holes that start at 11pm and end at 4am.</p>
       </div>
-      <div class="about-tags">
-        <div class="tag-row"><span class="tag-dot"></span> Jamf Pro · Microsoft Entra ID · M365</div>
-        <div class="tag-row"><span class="tag-dot purple"></span> PowerShell · Python · Bash</div>
-        <div class="tag-row"><span class="tag-dot green"></span> Zscaler · CrowdStrike · Jamf Protect</div>
-        <div class="tag-row"><span class="tag-dot orange"></span> Ethical Hacking · Cloud · Security</div>
-        <div class="tag-row"><span class="tag-dot"></span> PC Building · Gaming · Tinkering</div>
+      <div class="about-aside">
+        <div class="aside-block">
+          <p class="aside-label">Arsenal</p>
+          <div class="aside-items">
+            <span class="aside-item">Jamf Pro · Microsoft Intune</span>
+            <span class="aside-item">Entra ID · Azure AD · SSO</span>
+            <span class="aside-item">Python · PowerShell · Bash</span>
+            <span class="aside-item">Zscaler · CrowdStrike · Jira</span>
+          </div>
+        </div>
+        <div class="aside-block">
+          <p class="aside-label">Interests</p>
+          <div class="aside-items">
+            <span class="aside-item">PC Gaming</span>
+            <span class="aside-item">PC Building</span>
+            <span class="aside-item">Automation &amp; AI</span>
+            <span class="aside-item">Ethical Hacking (learning)</span>
+            <span class="aside-item">Ninjas / Cyberpunk / Stealth</span>
+            <span class="aside-item">Late nights. Cold weather.</span>
+          </div>
+        </div>
+        <div class="aside-block">
+          <p class="aside-label">Next Objective</p>
+          <div class="aside-items">
+            <span class="aside-item">Cloud Engineering</span>
+            <span class="aside-item">Cyber Security</span>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
+  <div class="divider"><div class="div-line"></div></div>
+
   <!-- PROJECTS -->
   <section id="projects">
-    <p class="section-label">// 002</p>
-    <h2 class="section-title">Projects</h2>
-    <div class="projects-grid">
+    <p class="eyebrow">Operations</p>
+    <h2 class="sec-title">Projects</h2>
+    <div class="proj-list">
 
-      <!-- Cyber Security RPG -->
-      <a href="https://github.com/Zfyew" target="_blank" class="project-card wip">
-        <div class="project-header">
-          <span class="project-icon">🎮</span>
-          <span class="project-lang">Python</span>
+      <div class="proj-row">
+        <span class="proj-num">01</span>
+        <div>
+          <div class="proj-name">Cyber Security RPG</div>
+          <div class="proj-desc">Terminal RPG — play as a security analyst. Crack passwords, scan ports, investigate breaches. Levels built around real security concepts.</div>
         </div>
-        <div class="project-name">Cyber Security RPG</div>
-        <div class="project-desc">A terminal-based RPG where you play as a security analyst — crack passwords, scan networks, investigate breaches. Levels built around real security concepts.</div>
-        <div class="project-footer coming">// coming soon</div>
-      </a>
+        <div class="proj-meta">
+          <span class="proj-lang">Python</span>
+          <span class="proj-status">Pending</span>
+        </div>
+      </div>
 
-      <!-- Spotify Analyser -->
-      <a href="https://github.com/Zfyew" target="_blank" class="project-card wip">
-        <div class="project-header">
-          <span class="project-icon">🎵</span>
-          <span class="project-lang">Python</span>
+      <div class="proj-row">
+        <span class="proj-num">02</span>
+        <div>
+          <div class="proj-name">Spotify Playlist Analyser</div>
+          <div class="proj-desc">Connects to the Spotify API. Analyses genres, energy, mood patterns and playlist stats — output to terminal.</div>
         </div>
-        <div class="project-name">Spotify Playlist Analyser</div>
-        <div class="project-desc">Connects to the Spotify API to analyse your listening habits — top genres, energy levels, mood patterns and playlist stats visualised in the terminal.</div>
-        <div class="project-footer coming">// coming soon</div>
-      </a>
+        <div class="proj-meta">
+          <span class="proj-lang">Python</span>
+          <span class="proj-status">Pending</span>
+        </div>
+      </div>
 
-      <!-- Network Diagnostic -->
-      <a href="https://github.com/Zfyew" target="_blank" class="project-card wip">
-        <div class="project-header">
-          <span class="project-icon">🔍</span>
-          <span class="project-lang">Python</span>
+      <div class="proj-row">
+        <span class="proj-num">03</span>
+        <div>
+          <div class="proj-name">Network Diagnostic Tool</div>
+          <div class="proj-desc">First-response network toolkit. Ping, DNS lookup, traceroute, port scan — one command.</div>
         </div>
-        <div class="project-name">Network Diagnostic Tool</div>
-        <div class="project-desc">A first-response network troubleshooting toolkit — runs ping tests, DNS lookups, traceroutes and port checks against a target host.</div>
-        <div class="project-footer coming">// coming soon</div>
-      </a>
+        <div class="proj-meta">
+          <span class="proj-lang">Python</span>
+          <span class="proj-status">Pending</span>
+        </div>
+      </div>
 
-      <!-- System Health Monitor -->
-      <a href="https://github.com/Zfyew" target="_blank" class="project-card wip">
-        <div class="project-header">
-          <span class="project-icon">📊</span>
-          <span class="project-lang">Python</span>
+      <div class="proj-row">
+        <span class="proj-num">04</span>
+        <div>
+          <div class="proj-name">System Health Monitor</div>
+          <div class="proj-desc">Real-time CPU, memory and disk monitoring. Threshold alerts. Clean summary report.</div>
         </div>
-        <div class="project-name">System Health Monitor</div>
-        <div class="project-desc">Monitors CPU, memory, disk usage and running processes in real time. Flags thresholds and outputs a clean summary report.</div>
-        <div class="project-footer coming">// coming soon</div>
-      </a>
+        <div class="proj-meta">
+          <span class="proj-lang">Python</span>
+          <span class="proj-status">Pending</span>
+        </div>
+      </div>
 
-      <!-- System Cleanup -->
-      <a href="https://github.com/Zfyew" target="_blank" class="project-card wip">
-        <div class="project-header">
-          <span class="project-icon">🧹</span>
-          <span class="project-lang">PowerShell</span>
+      <div class="proj-row">
+        <span class="proj-num">05</span>
+        <div>
+          <div class="proj-name">Windows System Cleanup</div>
+          <div class="proj-desc">Automates temp file clearing, recycle bin, DNS cache flush. Reports space recovered. On demand or scheduled.</div>
         </div>
-        <div class="project-name">Windows System Cleanup</div>
-        <div class="project-desc">Automates clearing temp files, emptying the recycle bin, flushing DNS cache and reporting disk space recovered. Scheduled or run on demand.</div>
-        <div class="project-footer coming">// coming soon</div>
-      </a>
+        <div class="proj-meta">
+          <span class="proj-lang">PowerShell</span>
+          <span class="proj-status">Pending</span>
+        </div>
+      </div>
 
     </div>
   </section>
 
   <!-- FOOTER -->
   <footer>
-    <p>Built by Billy Yew · <a href="https://github.com/Zfyew" target="_blank">github.com/Zfyew</a></p>
-    <p>London, UK · <a href="https://www.linkedin.com/in/billy-yew-359b0a1b3/" target="_blank">LinkedIn</a></p>
+    <span>Billy Yew &nbsp;·&nbsp; London &nbsp;·&nbsp; 夜</span>
+    <span>
+      <a href="https://github.com/Zfyew" target="_blank">GitHub</a>
+      &nbsp;·&nbsp;
+      <a href="https://www.linkedin.com/in/billy-yew-359b0a1b3/" target="_blank">LinkedIn</a>
+    </span>
   </footer>
+
+  <!-- RAIN -->
+  <script>
+    // Vertical rain streaks
+    const canvas = document.getElementById('rain');
+    const ctx = canvas.getContext('2d');
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    const drops = Array.from({ length: 120 }, () => ({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      len: Math.random() * 60 + 20,
+      speed: Math.random() * 4 + 2,
+      opacity: Math.random() * 0.25 + 0.05,
+      width: Math.random() * 0.8 + 0.2
+    }));
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drops.forEach(d => {
+        const grad = ctx.createLinearGradient(d.x, d.y, d.x, d.y + d.len);
+        grad.addColorStop(0, `rgba(180,200,230,0)`);
+        grad.addColorStop(0.5, `rgba(180,200,230,${d.opacity})`);
+        grad.addColorStop(1, `rgba(180,200,230,0)`);
+        ctx.beginPath();
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = d.width;
+        ctx.moveTo(d.x, d.y);
+        ctx.lineTo(d.x, d.y + d.len);
+        ctx.stroke();
+        d.y += d.speed;
+        if (d.y > canvas.height + d.len) {
+          d.y = -d.len;
+          d.x = Math.random() * canvas.width;
+        }
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+  </script>
 
 </body>
 </html>
