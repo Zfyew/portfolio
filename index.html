@@ -56,9 +56,11 @@
       position: fixed; right: -3rem; top: 50%;
       transform: translateY(-50%);
       width: 28rem; height: 28rem;
-      opacity: 0.12;
+      opacity: 0.13;
       pointer-events: none; z-index: 0;
-      filter: sepia(1) saturate(3) hue-rotate(-30deg) brightness(0.6);
+      filter: sepia(1) saturate(3) hue-rotate(-30deg) brightness(0.65)
+              drop-shadow(6px 8px 12px rgba(0,0,0,0.9))
+              drop-shadow(-3px -3px 6px rgba(139,26,26,0.25));
       animation: shuriken-spin 45s linear infinite;
     }
 
@@ -421,6 +423,41 @@
     footer a { color: var(--nav-text); text-decoration: none; transition: color 0.2s; }
     footer a:hover { color: var(--nav-hover); }
 
+
+    /* ── SCROLL INDICATOR ── */
+    .scroll-indicator {
+      position: absolute;
+      bottom: 2rem; left: 4rem;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 0.5rem;
+      opacity: 0; animation: up 0.6s ease forwards 1.5s;
+      z-index: 1;
+    }
+
+    .scroll-label {
+      font-size: 0.48rem; color: var(--muted2);
+      letter-spacing: 0.35em; text-transform: uppercase;
+    }
+
+    .scroll-line {
+      width: 1px; height: 44px;
+      background: var(--border2);
+      position: relative; overflow: hidden;
+    }
+
+    .scroll-line::after {
+      content: '';
+      position: absolute; top: -100%; left: 0;
+      width: 100%; height: 60%;
+      background: linear-gradient(180deg, transparent, var(--red-bright), transparent);
+      animation: scroll-drop 2.2s ease-in-out infinite 1.8s;
+    }
+
+    @keyframes scroll-drop {
+      0%   { top: -60%; }
+      100% { top: 110%; }
+    }
+
     /* ── ANIMATIONS ── */
     @keyframes up {
       from { opacity: 0; transform: translateY(10px); }
@@ -520,6 +557,14 @@
     </div>
   </div>
 
+  <!-- SCROLL INDICATOR -->
+  <div style="position:relative; max-width:1080px; margin:0 auto; padding:0 4rem;">
+    <div class="scroll-indicator" style="left:auto; right:4rem;">
+      <span class="scroll-label">Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </div>
+
   <div class="divider"><div class="div-line"></div></div>
 
   <!-- ABOUT -->
@@ -572,7 +617,7 @@
     <h2 class="sec-title">Projects</h2>
     <div class="proj-list">
 
-      <div class="proj-row">
+      <a class="proj-row" href="https://github.com/Zfyew/cyber-security-rpg" target="_blank" rel="noopener">
         <span class="proj-num">01</span>
         <div>
           <div class="proj-name">Cyber Security RPG</div>
@@ -580,11 +625,11 @@
         </div>
         <div class="proj-meta">
           <span class="proj-lang">Python</span>
-          <span class="proj-status">Pending</span>
+          <span class="proj-status"><span style="color:var(--red-bright)">↗</span> Soon</span>
         </div>
-      </div>
+      </a>
 
-      <div class="proj-row">
+      <a class="proj-row" href="https://github.com/Zfyew/spotify-playlist-analyser" target="_blank" rel="noopener">
         <span class="proj-num">02</span>
         <div>
           <div class="proj-name">Spotify Playlist Analyser</div>
@@ -592,11 +637,11 @@
         </div>
         <div class="proj-meta">
           <span class="proj-lang">Python</span>
-          <span class="proj-status">Pending</span>
+          <span class="proj-status"><span style="color:var(--red-bright)">↗</span> Soon</span>
         </div>
-      </div>
+      </a>
 
-      <div class="proj-row">
+      <a class="proj-row" href="https://github.com/Zfyew/network-diagnostic-tool" target="_blank" rel="noopener">
         <span class="proj-num">03</span>
         <div>
           <div class="proj-name">Network Diagnostic Tool</div>
@@ -604,11 +649,11 @@
         </div>
         <div class="proj-meta">
           <span class="proj-lang">Python</span>
-          <span class="proj-status">Pending</span>
+          <span class="proj-status"><span style="color:var(--red-bright)">↗</span> Soon</span>
         </div>
-      </div>
+      </a>
 
-      <div class="proj-row">
+      <a class="proj-row" href="https://github.com/Zfyew/system-health-monitor" target="_blank" rel="noopener">
         <span class="proj-num">04</span>
         <div>
           <div class="proj-name">System Health Monitor</div>
@@ -616,11 +661,11 @@
         </div>
         <div class="proj-meta">
           <span class="proj-lang">Python</span>
-          <span class="proj-status">Pending</span>
+          <span class="proj-status"><span style="color:var(--red-bright)">↗</span> Soon</span>
         </div>
-      </div>
+      </a>
 
-      <div class="proj-row">
+      <a class="proj-row" href="https://github.com/Zfyew/windows-system-cleanup" target="_blank" rel="noopener">
         <span class="proj-num">05</span>
         <div>
           <div class="proj-name">Windows System Cleanup</div>
@@ -628,9 +673,9 @@
         </div>
         <div class="proj-meta">
           <span class="proj-lang">PowerShell</span>
-          <span class="proj-status">Pending</span>
+          <span class="proj-status"><span style="color:var(--red-bright)">↗</span> Soon</span>
         </div>
-      </div>
+      </a>
 
     </div>
   </section>
