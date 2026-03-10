@@ -402,8 +402,21 @@
 
     .proj-status {
       font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase;
-      color: var(--muted2); opacity: 0.45;
+      color: var(--red-bright); opacity: 0.9;
     }
+
+    .proj-tags {
+      display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.6rem;
+    }
+
+    .proj-tag {
+      font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--red-bright); border: 1px solid var(--red-dim);
+      padding: 0.15rem 0.55rem; opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+
+    .proj-row:hover .proj-tag { opacity: 1; }
 
     /* ── FOOTER ── */
     footer {
@@ -441,6 +454,7 @@
       letter-spacing: 0.3em; text-transform: uppercase;
       writing-mode: vertical-rl;
       text-orientation: mixed;
+      opacity: 0.75;
     }
 
     .scroll-line {
@@ -663,7 +677,12 @@
         <span class="proj-num">01</span>
         <div>
           <div class="proj-name">Cyber Security RPG</div>
-          <div class="proj-desc">Browser-based cybersecurity training game. Four randomised missions across 11 scenario types — password cracking, port scanning, social engineering and more. Every scenario maps to a CompTIA Security+ SY0-701 objective. Optional AI mode via Claude API generates unique scenarios each run.</div>
+          <div class="proj-desc">Browser-based cybersecurity training game. Four randomised missions across 11 scenario types — password cracking, port scanning, social engineering and more. Optional AI mode via Claude API generates unique scenarios each run.</div>
+          <div class="proj-tags">
+            <span class="proj-tag">Flask</span>
+            <span class="proj-tag">Anthropic API</span>
+            <span class="proj-tag">Web App</span>
+          </div>
         </div>
         <div class="proj-meta">
           <span class="proj-lang">Python · Flask · JS</span>
@@ -676,6 +695,11 @@
         <div>
           <div class="proj-name">Spotify Playlist Analyser</div>
           <div class="proj-desc">Connects to the Spotify API and runs a full analysis on any playlist. Breaks down genre, energy, mood, danceability and tempo — plus top 10 artists by track count. Outputs a structured report to terminal.</div>
+          <div class="proj-tags">
+            <span class="proj-tag">Spotipy</span>
+            <span class="proj-tag">Spotify API</span>
+            <span class="proj-tag">CLI</span>
+          </div>
         </div>
         <div class="proj-meta">
           <span class="proj-lang">Python</span>
@@ -688,6 +712,11 @@
         <div>
           <div class="proj-name">Network Diagnostic Tool</div>
           <div class="proj-desc">First-response network toolkit. Ping, DNS lookup with reverse resolution, traceroute and port scan — all from a single interactive menu.</div>
+          <div class="proj-tags">
+            <span class="proj-tag">socket</span>
+            <span class="proj-tag">DNS</span>
+            <span class="proj-tag">CLI</span>
+          </div>
         </div>
         <div class="proj-meta">
           <span class="proj-lang">Python</span>
@@ -700,6 +729,11 @@
         <div>
           <div class="proj-name">System Health Monitor</div>
           <div class="proj-desc">Live terminal dashboard refreshing every 2 seconds. Tracks CPU, RAM and disk usage alongside top 5 processes by memory. Raises alerts if thresholds are breached and prints a session summary on exit.</div>
+          <div class="proj-tags">
+            <span class="proj-tag">psutil</span>
+            <span class="proj-tag">CLI</span>
+            <span class="proj-tag">Real-time</span>
+          </div>
         </div>
         <div class="proj-meta">
           <span class="proj-lang">Python</span>
@@ -712,6 +746,11 @@
         <div>
           <div class="proj-name">Windows System Cleanup</div>
           <div class="proj-desc">Clears temp files, error logs, memory dumps, recycle bin, DNS cache and Delivery Optimisation cache. Reports space recovered. Runs sfc /scannow at the end to scan for corrupted system files.</div>
+          <div class="proj-tags">
+            <span class="proj-tag">sfc</span>
+            <span class="proj-tag">Automation</span>
+            <span class="proj-tag">Sysadmin</span>
+          </div>
         </div>
         <div class="proj-meta">
           <span class="proj-lang">PowerShell</span>
